@@ -4,19 +4,19 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
 	<script>
         (function($){
-            $.fn.extend({ 
+            $.fn.extend({
                 selectAddress: function(options) {
-                    
+
                     let datas = [];
 
                     let defaults = {
                         type : 'province'
                     };
-                    
+
                     var options = $.extend(defaults, options);
-                    
-                    
-                    if(options.type == 'province') {
+
+
+                    if(options.type === 'province') {
                         url = 'http://localhost:3000/api/v1/provinces'
 
                         $.ajax({
@@ -26,7 +26,7 @@
                             data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
                         }).done(function(response) {
                             datas = response;
-                        });	
+                        });
 
                         return this.each(function() {
                             datas.forEach((item) => {
@@ -34,43 +34,47 @@
                             });
                         });
                     }
-                    
-                    if(options.type == 'district') {
+
+                    if(options.type === 'district') {
                         $('#province-select').change(function(){
                             parentId = $('#province-select').find('option:selected').data('id')
                             url = 'http://localhost:3000/api/v1/districts/' + parentId
                         }).change((res) => {
-                        
+
                             $.ajax({
                                 async: false,
-                                url: 'http://localhost:3000/api/v1/districts/1',
+                                url: url,
                                 type: 'GET',
                                 data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
                             }).done(function(response) {
                                 datas = response;
-                            });	
+                            });
 
                             return this.each(function() {
+                                console.log('dt',datas)
+                                $(this).find('option').remove().end();
                                 datas.forEach((item) => {
                                     $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
                                 });
-                            });  
+                            });
                         })
                     }
+
+                    // if (options === )
                 }
             });
         })(jQuery);
-	
+
 	</script>
-	
+
 	<script type="text/javascript">
         $(document).ready(function() {
             $('#province-select').selectAddress();
             $('#district-select').selectAddress({type: 'district'});
             // $('#ward-select').selectAddress({type: 'ward'});
-        });	
+        });
 	</script>
-</head>   
+</head>
 <body>
     <select name="province" id="province-select"></select>
     <select name="district" id="district-select"></select>
