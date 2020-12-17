@@ -8,6 +8,8 @@
                 selectAddress: function(options) {
 
                     let datas = [];
+                    let datas1 = [];
+                    let datas2 = [];
 
                     let defaults = {
                         type : 'province'
@@ -28,9 +30,33 @@
                             datas = response;
                         });
 
+                        $.ajax({
+                            async: false,
+                            url: 'http://localhost:3000/api/v1/districts/1',
+                            type: 'GET',
+                            data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
+                        }).done(function(response) {
+                            datas1 = response;
+                        });
+
+                        $.ajax({
+                            async: false,
+                            url: 'http://localhost:3000/api/v1/wards/1',
+                            type: 'GET',
+                            data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
+                        }).done(function(response) {
+                            datas2 = response;
+                        });
+
                         return this.each(function() {
                             datas.forEach((item) => {
                                 $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
+                            });
+                            datas1.forEach((item) => {
+                                $('#district-select').append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
+                            });
+                            datas2.forEach((item) => {
+                                $('#ward-select').append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
                             });
                         });
                     }
@@ -51,7 +77,6 @@
                             });
 
                             return this.each(function() {
-                                console.log('dt',datas)
                                 $(this).find('option').remove().end();
                                 datas.forEach((item) => {
                                     $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
@@ -60,7 +85,51 @@
                         })
                     }
 
-                    // if (options === )
+                    if (options.type === 'ward') {
+                        $('#province-select').change(function (){
+                            districtId = $('#district-select').find('option:selected').data('id')
+                            console.log('ffff',districtId)
+                            url = 'http://localhost:3000/api/v1/wards/' + districtId
+                        }).change(res => {
+                            $.ajax({
+                                async: false,
+                                url: url,
+                                type: 'GET',
+                                data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
+                            }).done(function(response) {
+                                datas = response;
+                            });
+
+                            return this.each(function() {
+                                $(this).find('option').remove().end();
+                                datas.forEach((item) => {
+                                    $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
+                                });
+                            });
+                        })
+
+                        $('#district-select').change(function (){
+                            districtId = $('#district-select').find('option:selected').data('id')
+                            console.log('ffff',districtId)
+                            url = 'http://localhost:3000/api/v1/wards/' + districtId
+                        }).change(res => {
+                            $.ajax({
+                                async: false,
+                                url: url,
+                                type: 'GET',
+                                data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
+                            }).done(function(response) {
+                                datas = response;
+                            });
+
+                            return this.each(function() {
+                                $(this).find('option').remove().end();
+                                datas.forEach((item) => {
+                                    $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
+                                });
+                            });
+                        })
+                    }
                 }
             });
         })(jQuery);
@@ -71,13 +140,13 @@
         $(document).ready(function() {
             $('#province-select').selectAddress();
             $('#district-select').selectAddress({type: 'district'});
-            // $('#ward-select').selectAddress({type: 'ward'});
+            $('#ward-select').selectAddress({type: 'ward'});
         });
 	</script>
 </head>
 <body>
     <select name="province" id="province-select"></select>
     <select name="district" id="district-select"></select>
-    <!-- <select name="ward" id="ward-select"></select> -->
+    <select name="ward" id="ward-select"></select>
 </body>
 </html>
