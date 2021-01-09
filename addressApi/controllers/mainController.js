@@ -1,12 +1,10 @@
 'use strict'
 
-// const util = require('util')
-// const mysql = require('mysql')
 const DB = require('./../databases/db')
 
 module.exports = {
     getProvinces: (req, res) => {
-        let sql = 'SELECT * FROM province'
+        let sql = 'SELECT * FROM province;'
         DB.query(sql, (err, response) => {
             if (err) throw err
             res.json(response)
