@@ -2,78 +2,28 @@
 <head>
     <title>Test</title>
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
-	<script>
-        (function($){
-            $.fn.extend({ 
-                selectAddress: function(options) {
-                    
-                    let datas = [];
-
-                    let defaults = {
-                        type : 'province'
-                    };
-                    
-                    var options = $.extend(defaults, options);
-                    
-                    
-                    if(options.type == 'province') {
-                        url = 'http://localhost:3000/api/v1/provinces'
-
-                        $.ajax({
-                            async: false,
-                            url: url,
-                            type: 'GET',
-                            data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
-                        }).done(function(response) {
-                            datas = response;
-                        });	
-
-                        return this.each(function() {
-                            datas.forEach((item) => {
-                                $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
-                            });
-                        });
-                    }
-                    
-                    if(options.type == 'district') {
-                        $('#province-select').change(function(){
-                            parentId = $('#province-select').find('option:selected').data('id')
-                            url = 'http://localhost:3000/api/v1/districts/' + parentId
-                        }).change((res) => {
-                        
-                            $.ajax({
-                                async: false,
-                                url: 'http://localhost:3000/api/v1/districts/1',
-                                type: 'GET',
-                                data: { 'request': "", 'target': 'arrange_url', 'method': 'method_target' },
-                            }).done(function(response) {
-                                datas = response;
-                            });	
-
-                            return this.each(function() {
-                                datas.forEach((item) => {
-                                    $(this).append("<option value=" + item._code + " data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
-                                });
-                            });  
-                        })
-                    }
-                }
-            });
-        })(jQuery);
-	
-	</script>
-	
-	<script type="text/javascript">
-        $(document).ready(function() {
-            $('#province-select').selectAddress();
-            $('#district-select').selectAddress({type: 'district'});
-            // $('#ward-select').selectAddress({type: 'ward'});
-        });	
-	</script>
-</head>   
+    <script src="control.js"> </script>
+</head>
 <body>
-    <select name="province" id="province-select"></select>
-    <select name="district" id="district-select"></select>
-    <!-- <select name="ward" id="ward-select"></select> -->
+    <div id='address'></div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#address').address({
+                type: "ward",
+                province: {
+                    name: "province",
+                    class: ""
+                },
+                district: {
+                    name: "district",
+                    class: ""
+                },
+                ward: {
+                    name: "ward",
+                    class: ""
+                },
+            });
+        });
+    </script>
 </body>
 </html>
