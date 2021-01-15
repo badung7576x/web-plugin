@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 /node_modules/*
 /.env
+=======
+/addressApi/node_modules/*
+>>>>>>> e344a06d5844636b4887ea3cade2c7c782fe3e6f
