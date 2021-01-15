@@ -1,7 +1,13 @@
-
 (function($){
     $.fn.extend({
         address: function(options) {
+            const api = 'https://vn-address-api.herokuapp.com/api/v1/';
+            const initData = {
+                provinceSelectId: makeid(8),
+                districtSelectId: makeid(8),
+                wardSelectId: makeid(8)
+            }
+
             let defaults = {
                 type: "province",
                 province: {
@@ -11,52 +17,127 @@
             };
             options = $.extend(defaults, options);
 
-            let rootDiv = $(this);
-            let addressSelector = new AddressSelector();
-
             if(options.type == "province") {
-                let selectDiv = `
-                    <select name="${options.province.name}" class="${options.province.class}" id="${addressSelector.init.provinceSelectId}"></select>
-                `
-                rootDiv.append(selectDiv);
-                addressSelector.renderProvince();
+                if(options.province) {
+                    let selectDiv = `
+                        <div class="${options.province.parentDivClass}">
+                            ${options.province.label ? `<label>${options.province.label}</label>` : ""}
+                            <select name="${options.province.name}" class="${options.province.class}" id="${initData.provinceSelectId}"></select>
+                        </div>
+                    `
+                    $(this).append(selectDiv);
+                    $.get(api + 'provinces', function(response){ 
+                        if (response != null) {
+                            renderOption('province', initData.provinceSelectId, response);
+                        } else {
+                            console.error("AddressSelector: Get data error!")
+                        }
+                    });   
+                } else {
+                    console.error("AddressSelector: Custom option invalid!")
+                }
             } else if (options.type == "district") {
                 if(options.province && options.district) {
                     let selectDiv = `
-                        <select name="${options.province.name}" class="${options.province.class}" id="${addressSelector.init.provinceSelectId}"></select>
-                        <select name="${options.district.name}" class="${options.district.class}" id="${addressSelector.init.districtSelectId}"></select>
+                        <div class="${options.province.parentDivClass}">
+                            ${options.province.label ? `<label>${options.province.label}</label>` : ""}
+                            <select name="${options.province.name}" class="${options.province.class}" id="${initData.provinceSelectId}"></select>
+                        </div>
+                        <div class="${options.district.parentDivClass}">
+                            ${options.district.label ? `<label>${options.district.label}</label>` : ""}
+                            <select name="${options.district.name}" class="${options.district.class}" id="${initData.districtSelectId}" disabled></select>
+                        </div>
                     `
-                    rootDiv.append(selectDiv);
-                    addressSelector.renderProvince();
-                    addressSelector.renderDistrict();
+                    $(this).append(selectDiv);
+                    $.get(api + 'provinces', function(response){ 
+                        if (response != null) {
+                            renderOption('province', initData.provinceSelectId, response);
+                        } else {
+                            console.error("AddressSelector: Get data error!")
+                        }
+                    });  
+                    clearOption('district', initData.districtSelectId);
 
-                    $('#' + addressSelector.init.provinceSelectId).change(function(){
+                    $('#' + initData.provinceSelectId).change(function(){
                         let id = $(this).find('option:selected').data('id');
-                        addressSelector.renderDistrict(id);
+                        if(id != undefined) {
+                            $('#' + initData.districtSelectId).find('option').remove().end();
+                            $('#' + initData.districtSelectId).removeAttr("disabled");
+                            $.get(api + 'districts/' + id, function(response){ 
+                                if (response != null) {
+                                    renderOption('district', initData.districtSelectId, response);
+                                } else {
+                                    console.error("AddressSelector: Get data error!")
+                                }
+                            });  
+                        } else {
+                            clearOption('district', initData.districtSelectId);
+                        }
                     })
                 } else {
-                    console.error("AddressSelector: Option invalid!")
+                    console.error("AddressSelector: Custom option invalid!")
                 }
             } else if (options.type == "ward") {
                 if(options.province && options.district && options.ward) {
                     let selectDiv = `
-                    <select name="${options.province.name}" class="${options.province.class}" id="${addressSelector.init.provinceSelectId}"></select>
-                    <select name="${options.district.name}" class="${options.district.class}" id="${addressSelector.init.districtSelectId}"></select>
-                    <select name="${options.ward.name}" class="${options.ward.class}" id="${addressSelector.init.wardSelectId}"></select>
-                `
-                    rootDiv.append(selectDiv);
+                        <div class="${options.province.parentDivClass}">
+                            ${options.province.label ? `<label>${options.province.label}</label>` : ""}
+                            <select name="${options.province.name}" class="${options.province.class}" id="${initData.provinceSelectId}"></select>
+                        </div>
+                        <div class="${options.district.parentDivClass}">
+                            ${options.district.label ? `<label>${options.district.label}</label>` : ""}
+                            <select name="${options.district.name}" class="${options.district.class}" id="${initData.districtSelectId}"></select>
+                        </div>
+                        <div class="${options.ward.parentDivClass}">
+                            ${options.ward.label ? `<label>${options.ward.label}</label>` : ""}
+                            <select name="${options.ward.name}" class="${options.ward.class}" id="${initData.wardSelectId}"></select>
+                        </div>
+                    `
+                    $(this).append(selectDiv);
 
-                    addressSelector.renderProvince();
-                    addressSelector.renderDistrict();
-                    addressSelector.renderWard();
+                    $.get(api + 'provinces', function(response){ 
+                        if (response != null) {
+                            renderOption('province', initData.provinceSelectId, response);
+                        } else {
+                            console.error("AddressSelector: Get data error!")
+                        }
+                    });  
+                    clearOption('district', initData.districtSelectId);
+                    clearOption('ward', initData.wardSelectId);
 
-                    $('#' + addressSelector.init.provinceSelectId).change(function(){
+                    $('#' + initData.provinceSelectId).change(function(){
                         let id = $(this).find('option:selected').data('id');
-                        addressSelector.renderDistrict(id, 1);
+                        if(id != undefined) {
+                            $('#' + initData.districtSelectId).find('option').remove().end();
+                            $('#' + initData.districtSelectId).removeAttr("disabled");
+                            $.get(api + 'districts/' + id, function(response){ 
+                                if (response != null) {
+                                    renderOption('district', initData.districtSelectId, response);
+                                } else {
+                                    console.error("AddressSelector: Get data error!")
+                                }
+                            });  
+                        } else {
+                            clearOption('district', initData.districtSelectId);
+                            clearOption('ward', initData.wardSelectId);
+                        }
                     })
-                    $('#' + addressSelector.init.districtSelectId).change(function(){
+
+                    $('#' + initData.districtSelectId).change(function(){
                         let id = $(this).find('option:selected').data('id');
-                        addressSelector.renderWard(id);
+                        if(id != undefined) {
+                            $('#' + initData.wardSelectId).find('option').remove().end();
+                            $('#' + initData.wardSelectId).removeAttr("disabled");
+                            $.get(api + 'wards/' + id, function(response){ 
+                                if (response != null) {
+                                    renderOption('ward', initData.wardSelectId, response);
+                                } else {
+                                    console.error("AddressSelector: Get data error!")
+                                }
+                            });  
+                        } else {
+                            clearOption('ward', initData.wardSelectId);
+                        }
                     })
                 } else {
                     console.error("AddressSelector: Option invalid!")
@@ -66,48 +147,38 @@
     });
 })(jQuery);
 
-function AddressSelector() {
-    this.api = 'http://localhost:3000/api/v1/'
-    this.init = {
-        provinceSelectId: 'ZMlyt-b6tvq',
-        districtSelectId: 'cxxav-QWrol',
-        wardSelectId: 'Kc7Kd-8njkJ'
+function renderOption(type, id, data) {
+    if(type == 'province') {
+        $('#' + id).append("<option value='' selected>---Chọn tỉnh/thành phố---</option>");
+    } else if (type == 'district') {
+        $('#' + id).append("<option value='' selected>---Chọn quận/huyện---</option>");
+    } else if (type == 'ward') {
+        $('#' + id).append("<option value='' selected>---Chọn xã/phường---</option>");
+    }
+    data.forEach((item) => {
+        let displayName = item._prefix ? item._prefix  + " " + item._name : item._name;
+        $('#' + id).append("<option value='" + displayName + "' data-id='"+ item.id +"'>" + displayName + "</option>");
+    });
+}
+
+function clearOption(type, id) {
+    $('#' + id).prop("disabled", true);
+    $('#' + id).find('option').remove().end();
+    if(type == 'province') {
+        $('#' + id).append("<option value='' selected>---Chọn tỉnh/thành phố---</option>");
+    } else if (type == 'district') {
+        $('#' + id).append("<option value='' selected>---Chọn quận/huyện---</option>");
+    } else if (type == 'ward') {
+        $('#' + id).append("<option value='' selected>---Chọn xã/phường---</option>");
     }
 }
 
-AddressSelector.prototype.renderProvince = function() {
-    let provinceId = this.init.provinceSelectId;
-    $.get(this.api + 'provinces', function(response){
-        $('#' + provinceId).append("<option value='' selected>---Chọn tỉnh/thành phố---</option>");
-        response.forEach((item) => {
-            $('#' + provinceId).append("<option value='" + item._name + "' data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
-        });
-    });
-}
-
-AddressSelector.prototype.renderWard = function(districtId = 1) {
-    let wardId = this.init.wardSelectId;
-    $('#' + wardId).find('option').remove().end();
-    $.get(this.api + 'wards/' + districtId, function(response){
-        $('#' + wardId).append("<option value='' selected>---Chọn xã/phường---</option>");
-        response.forEach((item) => {
-            $('#' + wardId).append("<option value='" + item._name + "' data-id='"+ item.id +"'>" + (item._prefix ?? "")  + " " + item._name + "</option>");
-        });
-    });
-}
-
-AddressSelector.prototype.renderDistrict = function(provinceId = 1, renderWithWard = 0) {
-    let districtId = this.init.districtSelectId;
-    $('#' + districtId).find('option').remove().end();
-    $.ajaxSetup({async: false});
-    $.get(this.api + 'districts/' + provinceId, function(response){
-        $('#' + districtId).append("<option value='' selected>---Chọn quận/huyện---</option>");
-        response.forEach((item) => {
-            $('#' + districtId).append('<option value="' + item._name + '" data-id="'+ item.id +'">' + (item._prefix ?? "")  + " " + item._name + "</option>");
-        });
-    });
-    if(renderWithWard) {
-        let id = $('#' + districtId).find('option:nth-child(2)').data('id');
-        this.renderWard(id);
+function makeid(length) {
+    var result           = '';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-}
+    return result;
+ }
