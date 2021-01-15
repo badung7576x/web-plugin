@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="./control.js"></script>
+<title>Test site</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class='text-center'>Test Form</h1>
+        <form method='POST' action='test.php'>
+            <div class="row mb-4">
+              <div class="col">
+                <div class="form-outline">
+                    <label class="form-label">First name</label>
+                  <input type="text"class="form-control" name='firstname'/>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-outline">
+                    <label class="form-label">Last name</label>
+                    <input type="text" class="form-control" name='lastname'/>
+                </div>
+              </div>
+            </div>
+          
+            <!-- Text input -->
+              <div class='row' id="address"></div>
+          
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+                <label class="form-label">Email</label>
+              <input type="email"class="form-control" name='email' />
+            </div>
+          
+            <!-- Number input -->
+            <div class="form-outline mb-4">
+                <label class="form-label">Phone</label>
+              <input type="number" class="form-control" name='phone' />
+            </div>
+          
+            <!-- Message input -->
+            <div class="form-outline mb-4">
+            <label class="form-label">Note</label>
+              <textarea class="form-control"  rows="4" name='note'></textarea>
+            </div>
+          
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary mb-4">Submit</button>
+          </form>
+      </div>
+    <script>
+        $("#address").address({
+            type: 'ward',
+            province: {
+                name: 'province-field',
+                class: 'form-control',
+                parentDivClass: 'form-group col-4',
+                label: 'Tỉnh/ Thành phố'
+            },
+            district: {
+                name: 'district-field',
+                class: 'form-control',
+                parentDivClass: 'form-group col-4',
+                label: 'Quận/ Huyện'
+            },
+            ward: {
+                name: 'ward-field',
+                class: 'form-control',
+                parentDivClass: 'form-group col-4',
+                label: 'Xã/ Phường'
+            }
+        });
+    </script>
+</body>
+</html>
