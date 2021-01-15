@@ -1,8 +1,6 @@
 'use strict';
 require('dotenv').config({path: __dirname + '/../.env'})
 const mysql = require('mysql');
-const { Pool } = require('pg');
-let DB = null;
 
 DB = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
