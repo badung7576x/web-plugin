@@ -1,1 +1,2 @@
 /addressApi/node_modules/*
+/addressApi/.env
