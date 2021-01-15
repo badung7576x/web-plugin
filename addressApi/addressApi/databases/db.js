@@ -2,7 +2,7 @@
 require('dotenv').config({path: __dirname + '/../.env'})
 const mysql = require('mysql');
 
-const DB = mysql.createConnection({
+DB = mysql.createConnection({
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT || "3306",
   database: process.env.DB_NAME || "province",
